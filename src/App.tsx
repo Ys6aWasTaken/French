@@ -199,7 +199,7 @@ function AppContent() {
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard': return <Dashboard selectedGrade={selectedGrade} onNavigate={handleNavigate} />;
-      case 'learn': return <LearnMode selectedGrade={selectedGrade} />;
+      case 'learn': return <LearnMode selectedGrade={selectedGrade} onGradeSelect={setSelectedGrade} />;
       case 'quiz': return <QuizEngine selectedGrade={selectedGrade} />;
       case 'exam': return <ExamMode selectedGrade={selectedGrade} />;
       case 'analytics': return <Analytics selectedGrade={selectedGrade} />;
@@ -250,6 +250,12 @@ function AppContent() {
           {/* Page content with crossfade */}
           <div className="flex-1 overflow-y-auto" key={pageKey} style={{ animation: 'crossfadeIn 350ms ease both' }}>
             {renderPage()}
+            <footer className="px-7 lg:px-10 py-5 text-[11px] text-creme-500 text-center">
+              <p>for any problem contact us :</p>
+              <p>Ahmed Raafat +201151449087</p>
+              <p>Anas Mahfouz +201111161109</p>
+              <p>WhatsApp</p>
+            </footer>
           </div>
         </main>
       </div>

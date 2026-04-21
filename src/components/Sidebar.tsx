@@ -128,7 +128,7 @@ export function Sidebar({ currentPage, onNavigate, selectedGrade, onGradeSelect,
               }`}
               style={selectedGrade === 'all' ? { background: 'rgba(122, 139, 109, 0.12)' } : {}}
             >
-              All Grades
+              Study All Cards
               <span
                 className="text-[11px] px-2 py-0.5 rounded-full text-creme-400"
                 style={{ background: 'rgba(232, 227, 216, 0.05)' }}

@@ -10,9 +10,12 @@ import {
 } from 'react';
 import type { VocabCard, CardProgress, UserProfile, Grade, QuizType, QuizAttempt } from '../types';
 import { ALL_GRADES } from '../types';
-import { sampleCards } from '../data';
+import cardsRaw from '../cards.txt?raw';
+import { parseCardsText } from '../utils/cardsParser';
 
 const LEGACY_MIGRATED_KEY = 'fm_legacy_bundle_migrated_v1';
+const parsedSeed = parseCardsText(cardsRaw);
+const sampleCards = parsedSeed.cards;
 
 /** One-time copy from old global keys (`fm_cards`, …) into the teacher account only */
 function migrateLegacyBundle(storagePrefix: string, accountUsername: string) {
@@ -130,6 +133,12 @@ export function StoreProvider({
   userStorageId: string;
   accountUsername: string;
 }) {
+  useEffect(() => {
+    if (parsedSeed.errors.length > 0) {
+      console.warn('Cards source has invalid rows:\n' + parsedSeed.errors.join('\n'));
+    }
+  }, []);
+
   const prefix = `fm_u_${userStorageId}_`;
   const [cards, setCards] = useScopedLocalStorage<VocabCard[]>(prefix, 'cards', sampleCards, accountUsername);
   const [progress, setProgress] = useScopedLocalStorage<Record<string, CardProgress>>(prefix, 'progress', {}, accountUsername);

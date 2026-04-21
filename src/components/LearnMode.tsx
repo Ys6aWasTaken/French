@@ -1,13 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useStore } from '../hooks/useStore';
 import type { Grade } from '../types';
 import { GRADE_SHORT } from '../types';
 
 interface Props {
   selectedGrade: Grade | 'all';
+  onGradeSelect: (grade: Grade | 'all') => void;
 }
 
-export function LearnMode({ selectedGrade }: Props) {
+export function LearnMode({ selectedGrade, onGradeSelect }: Props) {
   const store = useStore();
   const [cardIndex, setCardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -21,6 +22,14 @@ export function LearnMode({ selectedGrade }: Props) {
 
   const card = cards[cardIndex];
   const progress = card ? store.progress[card.id] : undefined;
+
+  useEffect(() => {
+    setCardIndex((prev) => {
+      if (cards.length === 0) return 0;
+      return Math.min(prev, cards.length - 1);
+    });
+    setShowAnswer(false);
+  }, [cards.length, selectedGrade, mode]);
 
   const handleNext = () => {
     setShowAnswer(false);
@@ -100,8 +109,31 @@ export function LearnMode({ selectedGrade }: Props) {
         </div>
       </div>
 
+      <div className="flex flex-wrap items-center gap-2 fade-up fade-up-2">
+        {(['G10S1', 'G10S2', 'G11S1', 'G11S2', 'G12', 'all'] as const).map((grade) => (
+          <button
+            key={grade}
+            onClick={() => {
+              onGradeSelect(grade);
+              setCardIndex(0);
+              setShowAnswer(false);
+            }}
+            className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition-all duration-300 ${
+              selectedGrade === grade ? 'text-creme-100' : 'text-creme-400 hover:text-creme-200'
+            }`}
+            style={
+              selectedGrade === grade
+                ? { background: 'rgba(122, 139, 109, 0.2)', border: '1px solid rgba(122, 139, 109, 0.3)' }
+                : { background: 'rgba(232, 227, 216, 0.03)', border: '1px solid rgba(232, 227, 216, 0.05)' }
+            }
+          >
+            {grade === 'all' ? 'Study All Cards' : GRADE_SHORT[grade]}
+          </button>
+        ))}
+      </div>
+
       {/* Progress bar */}
-      <div className="noir-progress h-1 fade-up fade-up-2">
+      <div className="noir-progress h-1 fade-up fade-up-3">
         <div
           className="noir-progress-fill h-full"
           style={{ width: `${((cardIndex + 1) / cards.length) * 100}%`, background: 'linear-gradient(90deg, #3a3d5c, #b8943f)' }}
